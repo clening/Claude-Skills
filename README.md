@@ -60,6 +60,25 @@ Comprehensive proofreading for publication readiness - checks voice consistency,
 
 ---
 
+### 4. blog-marketer (`/blog-marketer`)
+Generates platform-specific promotional content (Substack Notes, LinkedIn, Bluesky) from published blog posts. Creates multiple variations to choose from while preserving author voice.
+
+**Usage:**
+```
+/blog-marketer <path-to-blog-post>
+```
+
+**What it generates:**
+- Substack Notes (3-5 variations, 200-300 chars each)
+- LinkedIn posts (2-3 variations, professional but conversational)
+- Bluesky threads (1-2 complete threads, casual/edgy)
+- Pull quotes (3-5 quotable excerpts, 280 chars max)
+- Thread starters (2-3 engagement prompts)
+
+**Output:** `[post-name]-marketing.md`
+
+---
+
 ## Workflow
 
 Typical blog post workflow using these skills:
@@ -71,6 +90,7 @@ Typical blog post workflow using these skills:
 5. **Fix** - Resolve linting issues
 6. **Proofread** - `/blog-proofreader` for final polish
 7. **Publish** - Post is ready!
+8. **Market** - `/blog-marketer` to generate promotional content
 
 ## Author Style
 
@@ -102,7 +122,8 @@ Blog Ideas and Posts/
 │   ├── post.md
 │   ├── post-critique.md
 │   ├── post-lint-report.md
-│   └── post-proofread.md
+│   ├── post-proofread.md
+│   └── post-marketing.md
 ```
 
 ## License
