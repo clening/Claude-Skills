@@ -1,536 +1,187 @@
 ---
 name: blog-marketer
-description: Generates platform-specific promotional content (Substack Notes, LinkedIn, Bluesky) from published blog posts. Creates multiple variations to choose from while preserving author voice.
+description: Generate platform-specific promotional content (Substack Notes, LinkedIn posts and carousels, pull quotes) from a blog post, calibrated to how Substack's and LinkedIn's 2026 algorithms actually distribute content. Use when the user asks to promote a post, write a Substack Note, draft a LinkedIn post, make a carousel/slide breakdown, generate pull quotes, or mentions "market this", "promote this post", "social content for this".
 ---
 
 <objective>
-Generate marketing content for blog posts across multiple platforms.
-Preserve author's sharp, conversational voice while adapting tone to platform norms.
-Create 3-5 variations per platform so author has options.
-Focus on hooks, key insights, and driving engagement.
+Generate marketing content for a blog post, calibrated to what actually
+drives distribution on Substack and LinkedIn in 2026 — not generic
+social-media-manager folklore. Preserve the author's voice. Create multiple
+variations so she has real choices, not one guess to accept or reject.
+
+Bluesky is explicitly deprioritized per her direction ("almost useless") —
+don't give it equal billing with Substack/LinkedIn.
 </objective>
 
-<author_voice>
-The author writes with:
-- Sharp, unapologetic critique
-- Technical precision (GDPR, AI, data protection)
-- Evidence-driven arguments
-- Conversational but authoritative tone
-- Strategic sarcasm/irony
-- Personal stakes in topics
+<scope>
+This skill owns DISTRIBUTION content and channel strategy, not the post
+itself:
 
-**Adapt to platform but don't lose the edge:**
-- LinkedIn: More professional but still direct
-- Bluesky: Conversational, can be more casual/edgy
-- Substack Notes: Hook-focused, teaser style
+- On-page discoverability (the post's own SEO/GEO — headings, entities,
+  information gain) → `blog-proofreader` owns this.
+- Argument quality → `blog-critique` owns this.
+
+If the post hasn't been through `blog-proofreader` yet, mention that once —
+the two skills are complementary: proofreader makes the post itself easier
+to find/cite; this skill promotes a post that's already good.
+</scope>
+
+<vault_conventions>
+Read `/home/privacat/.claude/skills/_shared/references/vault-conventions.md`
+before Step 1. Shared across all four blog skills.
+</vault_conventions>
+
+<author_voice>
+Read `/home/privacat/.claude/skills/_shared/references/voice.md` before
+Step 3. Shared across blog-critique, blog-proofreader, and blog-marketer.
+
+**Adapt to platform, don't lose the edge:**
+- LinkedIn: more professional but still direct.
+- Substack Notes: conversational, can be more casual/edgy.
 </author_voice>
+
+<platform_reality_2026>
+Read this before generating anything — it determines what "effective"
+content looks like on each platform right now. Detail and sourcing in
+`references/platform-research.md`; this is the operative summary.
+
+**Substack — primary channel:**
+- The Notes feed stopped prioritizing followed accounts in late 2025. Most
+  of what a subscriber now sees comes from creators they've never followed,
+  matched by audience-overlap signals. Posting alone doesn't reach people;
+  being visibly *in conversation* does.
+- **Restacking and replying to other people's Notes is the best-evidenced
+  growth lever** — confirmed by Substack's own ML lead, not a growth-hack
+  claim. A publication that only posts outward and never engages is largely
+  invisible to this mechanism, regardless of how good the writing is. This
+  isn't content this skill generates — flag it as a standing habit in
+  Step 5, every time.
+- Links do **not** suppress reach on Substack (unlike LinkedIn/X) — no need
+  to hide or delay the link.
+- No confirmed ideal Note length — Substack states the algorithm has no
+  format preference. Treat any character-count target below as a
+  practitioner heuristic, not an evidenced rule.
+- Visual Notes (photo/video) are a rising share (~1/3) and anecdotally
+  outperform text-only. Flag pull quotes that would work well as an
+  image-quote — this skill can't generate the image, but can flag the
+  candidate.
+- **The single highest-leverage lever specific to Substack is
+  Recommendations** — publications using them grow roughly 2.75x faster,
+  and most new subscribers to a recommended pub arrive via another
+  Substack's recommendation. This skill doesn't set that up; Step 5 always
+  reminds her to check it.
+
+**LinkedIn:**
+- External links in a normal post cut reach by roughly 60%. Real and current.
+- **"Link in first comment" is dead as of 2026** — the algorithm now detects
+  that bridge pattern and penalizes it too. Do not generate this pattern; if
+  you've seen it recommended elsewhere, it's stale.
+- Real workaround: LinkedIn's native Article/Newsletter format avoids the
+  link penalty by keeping the reader on-platform — trade-off is the reader
+  never lands on the actual post or subscribes there. Offer both options,
+  labeled honestly, and let her choose.
+- Document/carousel posts (5-10 slide PDF breakdowns) get roughly 3x the
+  engagement of plain-text posts — the single biggest format lever on this
+  platform. For an argument-driven writer, a slide breakdown of the post's
+  core argument usually beats another paragraph of status-update text.
+  **Generate a carousel outline by default, not just a text post.**
+- Hashtags are weak and contested since LinkedIn killed hashtag-following in
+  2024 — estimates range from "roughly neutral" to a small lift. Use 1-2
+  specific, contextual hashtags inline. Don't generate a stacked list of 5.
+- Saves and comments outweigh likes as a distribution signal — CTAs should
+  prompt saving or a real comment, not just a like.
+
+**Bluesky — deprioritized:**
+Generate at most one short thread, and only if she asks for it. Don't
+default to producing it or give it a full lettered section alongside
+Substack/LinkedIn.
+
+**Why this skill doesn't chase Google/organic search:**
+AI Overviews and zero-click search are suppressing publisher referral
+traffic broadly (reported 25-38% YoY declines in 2026). Organic search is a
+long-tail credibility asset for this newsletter, not a growth engine — hence
+the focus on Notes/Recommendations/LinkedIn distribution here. The post's
+own on-page discoverability is handled separately, by `blog-proofreader`.
+</platform_reality_2026>
 
 <process>
 ## Step 1: Get the File
 
-If args provided:
-- First arg is the path to the blog post file
-- If path doesn't include full vault path, prepend: `/mnt/c/Users/carey/Documents/SyncVaultC/Blog Ideas and Posts/`
-
-If no args:
-- Ask user for the file path
-
-Use Read tool to read the entire file.
+Resolve the input path per `<vault_conventions>`.
 
 ## Step 2: Analyze the Post
 
-Extract key elements:
+Extract:
+- **Title and thesis** — main argument, the "why should I care"
+- **Hook elements** — opening lines, counterintuitive takes, controversial
+  positions, personal anecdotes
+- **Key arguments** — usually 3-5, with supporting evidence
+- **Strong quotes** — one-liners, sarcastic observations, technical insight
+  made accessible; note which are image-quote candidates
+- **Call to action** — what should the reader do next
+- **URL** — from frontmatter `url:` field if present, else `[LINK]` placeholder
 
-**Title and Thesis:**
-- Main argument or claim
-- The "why should I care" factor
+## Step 3: Generate Platform Content
 
-**Hook Elements:**
-- Opening lines or quotes
-- Counterintuitive takes
-- Controversial positions
-- Personal anecdotes
-
-**Key Arguments:**
-- Main points (usually 3-5)
-- Supporting evidence
-- Examples or case studies
-
-**Strong Quotes:**
-- One-liners that stand alone
-- Quotable statements
-- Sarcastic observations
-- Technical insights made accessible
-
-**Call to Action:**
-- What should reader do after reading?
-- Link back to full post
-- Engagement prompt
-
-**URL Handling:**
-- Check frontmatter for `url:` field
-- If present, use it
-- If not, use placeholder `[LINK]` for author to fill in
-
-## Step 3: Generate Platform-Specific Content
+Read `<author_voice>` first. Then, per `<platform_reality_2026>`:
 
 ### A. Substack Notes (3-5 variations)
+Hook + insight + link (links are fine, don't hide them). At least one
+variation should be framed to invite a reply or restack, not just announce
+the post — e.g. ending on a genuine question rather than only a CTA link.
+Flag which variation(s) would work as an image-quote Note.
 
-**Format:**
-- 200-300 characters total
-- Hook + insight + link
-- Conversational tone
-- Clear CTA
+### B. LinkedIn (generate carousel first, then text)
+1. **Carousel/document outline** (5-10 slides) — the priority format. Give
+   each slide a one-line headline and 1-2 supporting bullets, building the
+   post's core argument slide by slide, ending on a CTA slide.
+2. **Text post, two labeled variants:**
+   - *Native/Article style* — no external link, keeps reader on LinkedIn,
+     summarizes the argument in full. Use when the goal is LinkedIn
+     presence/authority.
+   - *Status-update style* — includes the link, accepts the ~60% reach cost,
+     drives traffic to the actual post. Use when the goal is subscribers.
+   Label which is which so she picks deliberately, not by default.
+3. 1-2 contextual hashtags per post, inline — not a stacked list.
 
-**Patterns to use:**
-- Question hook: "Why does [X]? Here's what most people miss..."
-- Counterintuitive: "Everyone thinks [X]. But what if [Y]?"
-- Personal: "After [N] years in [field], I've learned..."
-- Provocative: "[Controversial take]. Here's why..."
+### C. Pull Quotes (3-5)
+280 characters or less, standalone impact. Mark any that are strong
+image-quote candidates for a visual Substack Note.
 
-**Example structure:**
-```
-[Hook question or statement]
+### D. Thread Starters (2-3)
+Questions or hot takes designed to prompt replies — these double as Notes
+engagement bait, which matters more now that replies feed the audience-
+overlap algorithm.
 
-[Key insight or counterintuitive take]
-
-[CTA + link]
-```
-
-### B. LinkedIn Posts (2-3 variations)
-
-**Format:**
-- 1-3 paragraphs (300-500 words max)
-- Professional but conversational
-- Key insight from post
-- Clear structure: Hook → Insight → Evidence → CTA
-- 3-5 relevant hashtags
-
-**Opening hooks:**
-- Personal experience: "After [time] doing [thing], I've noticed..."
-- Provocative question: "Why do [people] keep [doing thing]?"
-- Observation: "Everyone talks about [X], but nobody mentions [Y]"
-- Problem statement: "[Problem] is everywhere. Here's why..."
-
-**Structure:**
-```
-[Hook - 1-2 sentences]
-
-[Problem or observation - 1 paragraph]
-
-[Key insight or solution - 1 paragraph]
-
-[CTA]
-
-#Hashtag1 #Hashtag2 #Hashtag3
-```
-
-### C. Bluesky Threads (1-2 variations)
-
-**Format:**
-- Thread of 4-8 posts
-- Casual, conversational tone
-- More edge/sarcasm welcome
-- Build argument progressively
-- End with link
-
-**Thread patterns:**
-- Numbered: "🧵 1/7 Thread about [topic]"
-- Connected: Each post flows to next
-- Can use emoji for visual breaks
-- Personal asides and commentary welcome
-
-**Structure:**
-```
-1/ [Hook - grab attention]
-
-2/ [Setup the problem or question]
-
-3/ [First key point]
-
-4/ [Second key point]
-
-5/ [Counterargument or twist]
-
-...
-
-N/ [Conclusion + link to full post]
-```
-
-### D. Pull Quotes (3-5 quotes)
-
-**Format:**
-- 280 characters or less
-- Standalone impact
-- No context needed
-- Formatted with quote marks
-
-**Extract from post:**
-- Strong statements
-- Controversial takes
-- Technical insights made accessible
-- Memorable one-liners
-- Sarcastic observations
-
-**Format:**
-```
-> "[Quote text]"
-```
-
-### E. Thread Starters (2-3 prompts)
-
-**Format:**
-- Questions or hot takes
-- Designed to generate engagement
-- Related to post content
-- Can be provocative
-
-**Types:**
-- Questions: "What's your take on [controversial aspect]?"
-- Polls: "Which matters more: [A] or [B]?"
-- Hot takes: "[Controversial position]. Change my mind."
-- Experience prompts: "Have you experienced [problem]? How did you handle it?"
+### E. Bluesky (only if asked)
+One short thread (4-6 posts), 300 chars/post. Skip entirely unless requested.
 
 ## Step 4: Create Marketing File
 
-Create file at:
-```
-/mnt/c/Users/carey/Documents/SyncVaultC/Blog Ideas and Posts/YYYY-MM-DD - TITLE/[post-name]-marketing.md
-```
-
-If folder doesn't exist, save to same directory as source:
-```
-[post-name]-marketing.md
-```
-
-Use this format:
-
-```markdown
----
-title: Marketing Content
-date: YYYY-MM-DD
-source: [filename]
-post-url: [url from frontmatter or LINK placeholder]
----
-
-# Marketing: [Post Title]
-
-**Source:** `[path]`
-**Generated:** YYYY-MM-DD
-
----
-
-## Substack Notes
-
-Copy-paste ready. Choose your favorite or adapt:
-
-### Option 1: [Angle description]
-[Note text with link]
-
-Character count: [X]
-
-### Option 2: [Different angle]
-[Note text with link]
-
-Character count: [X]
-
-### Option 3: [Third angle]
-[Note text with link]
-
-Character count: [X]
-
----
-
-## LinkedIn Posts
-
-### Option 1: [Hook type - e.g., "Personal Experience"]
-[Full LinkedIn post text]
-
-[Link]
-
-#Hashtag1 #Hashtag2 #Hashtag3
-
-**Character count:** [X]
-
-### Option 2: [Different hook type]
-[Alternative post]
-
-[Link]
-
-#Hashtag1 #Hashtag2 #Hashtag3
-
-**Character count:** [X]
-
----
-
-## Bluesky Threads
-
-### Thread 1: [Thread theme]
-1/ [First post]
-
-2/ [Second post]
-
-3/ [Third post]
-
-4/ [Fourth post]
-
-5/ [Conclusion with link]
-
-### Thread 2: [Alternative approach]
-1/ [Hook]
-
-2/ [Build]
-
-3/ [Twist]
-
-4/ [Conclude + link]
-
----
-
-## Pull Quotes
-
-Great for graphics or standalone posts:
-
-> "[Quote 1]"
-
-> "[Quote 2]"
-
-> "[Quote 3]"
-
-> "[Quote 4]"
-
-> "[Quote 5]"
-
----
-
-## Thread Starters
-
-Use these to generate engagement:
-
-**Question 1:** [Thought-provoking question]
-
-**Hot Take 1:** [Controversial position from post]
-
-**Poll Idea:** [A] vs [B] - which matters more for [topic]?
-
----
-
-## Usage Tips
-
-- **Timing:** Post Substack Note immediately, LinkedIn within 24h, Bluesky can be ongoing
-- **Engagement:** Respond to comments, quote-tweet reactions, build conversation
-- **Repurpose:** Pull quotes work as image graphics, thread starters for later discussion
-- **Track:** Note which angles get most engagement for future posts
-```
+Write to `<post-folder>/<post-slug>-marketing.md` per `<vault_conventions>`.
+Use the structure in `references/marketing-template.md` — read it when you
+reach this step, not before.
 
 ## Step 5: Report to User
 
-Tell user:
-```
-Marketing content generated! File saved to: [path]
-
-Created:
-- [X] Substack Notes
-- [X] LinkedIn posts
-- [X] Bluesky threads
-- [X] Pull quotes
-- [X] Thread starters
-
-Ready to copy-paste and deploy!
-```
-
+Report the path and a one-line content summary. Then, every time, remind her
+of the two things this skill can't do for her but that outweigh anything it
+generates:
+1. **Restack/reply to other people's Notes** — the best-evidenced Substack
+   growth lever, and it's a habit, not a one-time task.
+2. **Substack Recommendations** — check whether this post's newsletter is
+   actively recommending and being recommended by adjacent
+   privacy/AI-governance publications; this is the single highest-leverage
+   lever available and this skill can't set it up.
 </process>
 
-<platform_guidelines>
-
-## Substack Notes
-- **Length:** 200-300 characters (strict limit)
-- **Tone:** Conversational, hook-focused
-- **Goal:** Drive clicks to full post
-- **CTA:** Always include link
-- **Best practices:**
-  - Start with question or provocative statement
-  - One key insight or counterintuitive take
-  - Clear value proposition ("Here's why...")
-  - Use line breaks for readability
-
-## LinkedIn
-- **Length:** 300-500 words (1-3 paragraphs)
-- **Tone:** Professional but conversational
-- **Goal:** Establish expertise, drive engagement
-- **Structure:** Hook → Problem → Insight → CTA
-- **Hashtags:** 3-5 relevant tags
-- **Best practices:**
-  - Personal experience or observation
-  - Clear paragraph breaks
-  - Specific examples or data points
-  - Professional but not corporate
-  - Link at end, not mid-text
-
-## Bluesky
-- **Length:** 300 chars per post, 4-8 posts per thread
-- **Tone:** Casual, conversational, can be edgy
-- **Goal:** Build argument, generate discussion
-- **Structure:** Progressive thread building to conclusion
-- **Best practices:**
-  - Number threads (1/, 2/, etc.)
-  - Each post should be digestible standalone
-  - Can use emoji for visual breaks
-  - Personal asides welcome
-  - End with link to full piece
-
-## Pull Quotes
-- **Length:** 280 characters max
-- **Tone:** Impactful, quotable
-- **Goal:** Standalone value, shareable
-- **Best practices:**
-  - Works without context
-  - Memorable phrasing
-  - Controversial or counterintuitive
-  - Good for image graphics
-
-</platform_guidelines>
-
-<hashtag_suggestions>
-
-Based on post topic, suggest relevant hashtags from these categories:
-
-**Privacy & Data Protection:**
-#Privacy #DataProtection #GDPR #CCPA #PrivacyLaw #DataPrivacy #Surveillance #DataRights
-
-**Tech Policy:**
-#TechPolicy #DigitalRights #TechRegulation #BigTech #TechEthics #AI #AIGovernance #AIRegulation
-
-**Legal & Compliance:**
-#LegalTech #Compliance #RiskManagement #InfoSec #CyberSecurity #DataSecurity
-
-**Industry-specific:**
-#HealthTech #FinTech #EdTech #LegalCompliance #EnterprisePrivacy
-
-**Thought Leadership:**
-#ThoughtLeadership #FutureOfWork #TechTrends #Innovation
-
-Suggest 5-7 hashtags per post, prioritizing:
-1. Core topic (e.g., #Privacy)
-2. Specific law/regulation if mentioned (e.g., #GDPR)
-3. Industry context (e.g., #HealthTech)
-4. Broader category (e.g., #TechPolicy)
-5. Engagement tags (e.g., #ThoughtLeadership)
-
-</hashtag_suggestions>
-
-<examples>
-
-## Example Substack Note
-
-**Post title:** "Privacy Nihilism is Pervasive. Are Our Laws to Blame?"
-
-**Option 1:**
-```
-"I don't care about privacy, I have nothing to hide."
-
-After a decade in privacy law, I've heard this thousands of times.
-
-The problem isn't people—it's our confusing, inconsistent laws.
-
-Here's how fixing the laws could break us free of privacy nihilism 👇
-
-[link]
-```
-Character count: 247
-
-**Option 2:**
-```
-Privacy is dead, right?
-
-Wrong. But our laws are making it feel that way.
-
-When laws are 300 pages of legal jargon, no wonder everyone's given up.
-
-We don't need more laws. We need better ones.
-
-[link]
-```
-Character count: 199
-
-## Example LinkedIn Post
-
-**Option 1: Personal Experience**
-```
-After nearly a decade in privacy & data protection, I've heard "I have nothing to hide" thousands of times. Each time, a little part of me dies inside.
-
-But here's the thing: The fault doesn't lie with people. It lies with our laws.
-
-Our privacy and data protection laws are confusingly complex, unclear, and inconsistent. They barely constrain the worst offenders while overwhelming smaller organizations. Most of us don't even know the rights these laws give us.
-
-We don't need more laws—we need better ones. Laws that are:
-- Clear enough to explain at a pub
-- Consistent across all actors
-- Complete with practical guidance
-
-In my latest piece, I break down exactly how we can fix this and why it matters for everyone.
-
-Read it here: [link]
-
-#Privacy #DataProtection #GDPR #TechPolicy #PrivacyLaw
-```
-
-## Example Bluesky Thread
-
-**Thread 1: Main Argument**
-```
-🧵 1/6 Why everyone thinks privacy is dead (and why it's our laws' fault)
-
-2/ "I don't care about privacy, I have nothing to hide."
-
-Imagine if people said "I don't care about free speech, I have nothing to say."
-
-We'd think that's absurd. But for privacy? Collective shrug.
-
-3/ After a decade in privacy law, I can tell you: this resignation isn't natural. It's manufactured.
-
-By laws so complex that nobody can understand them. So vague that compliance is a guessing game.
-
-4/ Example: Data subject access requests. Simple concept, right? Just get your own data.
-
-But the details? Where to ask, how to ask, what you get, when you can say no—completely inconsistent across jurisdictions.
-
-5/ We don't need a law degree to drive a car. We get a handbook explaining the rules.
-
-Why can't we have the same for privacy laws?
-
-Clear. Simple. Consistent.
-
-6/ My take: Fix the laws first. Make them readable, complete, and consistent.
-
-That's how we break free of privacy nihilism.
-
-Full piece: [link]
-```
-
-## Example Pull Quotes
-
-```
-> "Privacy is dead, we sigh in resignation. Who cares if Facebook or TikTok know everything about me?"
-
-> "Laws are written by politicians for lawyers to interpret. But laws shouldn't require a law degree to understand."
-
-> "We don't need more laws—we need better ones. Laws that don't require a magnifying glass or a law degree to understand."
-
-> "The trouble is, while most privacy laws start with the best intentions, they rarely succeed. That's because they're large, inscrutable, and packed with well-meaning but vague edicts that don't actually do much."
-```
-
-</examples>
-
 <key_reminders>
-
-1. **Preserve the edge** - Don't soften the author's sharp critique
-2. **Adapt, don't dilute** - Platform tone shifts but voice stays consistent
-3. **Multiple options** - Give 3-5 variations so author can choose
-4. **Character counts** - Always include for Substack Notes and pull quotes
-5. **Link handling** - Use URL from frontmatter or [LINK] placeholder
-6. **Hashtags matter** - But don't overdo it (3-5 max for LinkedIn)
-7. **Hook hard** - First line must grab attention
-8. **CTA clear** - Always tell reader what to do next
-
+1. **Preserve the edge** - platform tone shifts, voice doesn't
+2. **Carousel over text-only on LinkedIn** - roughly 3x the engagement
+3. **Never generate the link-in-first-comment trick** - dead as of 2026, actively penalized
+4. **Links are fine on Substack** - don't hide them, that's a LinkedIn problem not a Substack one
+5. **Bluesky is optional, not equal billing** - only on request
+6. **Always close with the Recommendations + restacking reminder** - highest-leverage items this skill can't generate
+7. **Multiple options** - give her real choices, especially the two LinkedIn text variants
 </key_reminders>
+</content>

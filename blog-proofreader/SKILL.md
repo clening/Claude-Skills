@@ -1,29 +1,44 @@
 ---
 name: blog-proofreader
-description: Comprehensive proofreading for blog posts - checks voice consistency, SEO, clarity, flow, and flags AI-y language. Creates detailed proofreading report with actionable suggestions.
+description: Comprehensive pre-publish proofread of a blog post - voice consistency, AI-y language, clarity/flow, discoverability (Google + AI-answer-engine citation), and a publication checklist. Use when the user asks to proofread, polish, or do a final pass on a post; asks if a post is ready to publish; asks about SEO, discoverability, or getting cited by ChatGPT/Perplexity/AI Overviews; or mentions "proofread this", "final check", "pre-publish".
 ---
 
 <objective>
 Proofread blog posts for publication readiness, focusing on:
 1. Voice consistency (preserving author's edge and style)
 2. Eliminating AI-y language (hedging, generic praise, excessive enthusiasm)
-3. SEO optimization (headlines, structure, keywords, meta descriptions)
+3. Discoverability — on-page choices that help both classic Google ranking
+   and citation by AI answer engines (ChatGPT, Perplexity, Google AI Mode)
 4. Clarity and flow (transitions, repetition, logical structure)
 5. Publication checklist items
 
 Creates a comprehensive proofreading report with specific, actionable feedback.
 </objective>
 
-<author_voice_guidelines>
-The author writes with:
-- Sharp, unapologetic critique (direct, doesn't pull punches)
-- Technical precision (GDPR, AI, data protection expertise)
-- Evidence-driven arguments (extensive sourcing, original research)
-- Conversational but authoritative tone
-- Personal investment in topics
-- Strategic use of sarcasm/irony
+<scope>
+This skill owns PROSE, VOICE, and DISCOVERABILITY. Stay in that lane:
 
-**Red Flags for AI-y Language:**
+- Argument quality, evidence gaps, counterarguments → `blog-critique` owns these.
+  Flag only the most obvious unsupported claims in passing (Section D below);
+  don't do a deep pass — that's a separate skill and a separate dialogue.
+- Broken footnotes, malformed links, formatting that breaks rendering →
+  `blog-linter` owns these.
+
+If something in another skill's lane catches your eye, note it in one line
+under "Out of Scope" and move on.
+</scope>
+
+<vault_conventions>
+Read `/home/privacat/.claude/skills/_shared/references/vault-conventions.md`
+before Step 1. Shared across all four blog skills.
+</vault_conventions>
+
+<author_voice_guidelines>
+Read `/home/privacat/.claude/skills/_shared/references/voice.md` before
+Step 2. Shared across blog-critique, blog-proofreader, and blog-marketer.
+
+**Red Flags for AI-y Language** (this skill's own responsibility, not covered
+in the shared voice file):
 - Excessive hedging: "It's worth noting that...", "It's important to understand...", "One might argue..."
 - Generic enthusiasm: "incredibly", "absolutely", "truly remarkable"
 - Overuse of qualifiers: "very", "quite", "rather", "somewhat"
@@ -35,14 +50,7 @@ The author writes with:
 <process>
 ## Step 1: Get the File
 
-If args provided:
-- First arg is the path to the blog post file
-- If path doesn't include full vault path, prepend: `/mnt/c/Users/carey/Documents/SyncVaultC/Blog Ideas and Posts/`
-
-If no args:
-- Ask user for the file path
-
-Use Read tool to read the entire file.
+Resolve the input path per `<vault_conventions>`.
 
 ## Step 2: Analyze the Post
 
@@ -50,407 +58,157 @@ Perform comprehensive analysis across these dimensions:
 
 ### A. Voice & Style Analysis
 
-**Check for AI-y language patterns:**
-- Excessive hedging phrases
-- Generic superlatives ("incredibly powerful", "truly amazing")
-- Unnecessary qualifiers ("very", "quite", "rather")
-- Overly formal or corporate language
-- Repetitive sentence structures
-- Saying things twice unnecessarily
-
-**Verify voice consistency:**
-- Does it sound like the author's authentic voice?
+Check for AI-y language patterns (see `<author_voice_guidelines>`), and
+verify voice consistency against `voice.md`:
+- Does it sound like her authentic voice — both registers are valid, but
+  don't blur them within one piece?
 - Any sections that feel "smoothed over" or generic?
-- Is the edge/sarcasm landing or does it feel forced?
+- Is rhythm/alliteration preserved where it's clearly intentional, or has
+  editing (hers or otherwise) flattened it?
 - Technical precision maintained throughout?
 
-### B. SEO & Structure Analysis
+**Originality & Honesty Check:**
+- Is this recycling common takes or providing fresh analysis?
+- What unique insight can't a reader generate in 30 seconds elsewhere? (This
+  doubles as the "information gain" check in Section B — genuinely original
+  synthesis is now the single biggest lever for both Google ranking and AI
+  citation post-2026, see below.)
+- Clichés: flag as "missed opportunities" for original phrasing, not errors.
 
-**Headline/Title:**
-- Is it compelling and clear?
-- Does it accurately represent the content?
-- Optimal length (50-60 characters for SEO)?
-- Does it have a hook?
+### B. Discoverability — Google + AI Answer Engines
 
-**Subheadings (H2, H3):**
-- Clear hierarchical structure?
-- Descriptive and keyword-rich?
-- Break up long sections?
-- Help with skimmability?
+**Frame this correctly before doing anything else:** as of 2026, "SEO" and
+"GEO" (getting cited by ChatGPT/Perplexity/Claude/Google AI Mode) are
+converging, not separate disciplines. Google's own guidance says AI Overviews
+and AI Mode use no separate crawl — they rerank the existing Google index.
+ChatGPT's search layer sits on Bing. **Getting retrieved at all (classic
+ranking/authority) is the dominant factor; text-level rewriting for AI is a
+much smaller, less reliable lever than the SEO industry claims.** Multiple
+2026 replications of the original "GEO" research found near-zero effect from
+formatting-only tweaks — see `references/discoverability-notes.md` for the
+underlying research if you want the detail.
+
+Given that, split checks into two tiers:
+
+**Tier 1 — do these, they're evidenced or free (per-post, check every time):**
+- **Self-contained paragraphs.** No orphan pronouns ("this," "as noted
+  above") that only resolve if the paragraph is read in full document
+  context — AI engines retrieve passages, not always full pages.
+- **Specific, descriptive headings** that restate the topic rather than
+  being clever or elliptical. Headings carry disproportionate retrieval
+  weight and often become the passage boundary.
+- **Named entities spelled out**, not pronoun'd away: "GDPR Article 22," not
+  "the provision"; full names/acronym pairs on first use per major section.
+- **Explicit dates and numbers** over vague temporal language: "In its March
+  2026 decision" beats "recently." This has direct empirical support.
+- **A definition sentence for each key term** she's introducing or relying
+  on: "X is a Y that does Z." Helps both a human skimming and a retrieval
+  system matching a definitional query.
+- **Front-loaded conclusions** — state the finding, then support it.
+- **Visible byline and credentials in the rendered post**, not just
+  frontmatter — live crawlers read visible text, not hidden metadata.
+- **Genuine information-gain check** (see Section A) — content that merely
+  synthesizes what's already in the top results is what Google's 2026 core
+  update reportedly targets as "AI slop." Her heavily-footnoted, primary-
+  source-driven style is structurally advantaged here; flag if a section
+  reads as pure summary of common takes.
+
+**Tier 2 — explicitly low-value or debunked. Don't add these, and flag them
+if already present so she stops spending time on them:**
+- Keyword density / repeating a target phrase for search purposes — dead;
+  keyword stuffing measurably *hurt* in the original GEO study.
+- Strict 50–60 character title rule — cosmetic at best; Google rewrites
+  titles freely. Keep the underlying instinct only as "make the title
+  specific," not a character-count rule.
+- Bolted-on FAQ blocks that don't correspond to real reader questions.
+- AI-specific schema/structured data — a 2026 study of 1,885 pages found no
+  measurable citation lift; live-fetch crawlers read visible text, not
+  hidden JSON-LD.
+- llms.txt — Google has confirmed it doesn't use it; adoption studies found
+  97% of these files receive zero AI-crawler requests.
+- Rewriting prose to sound more "authoritative" — the research explicitly
+  flags confident tone as a weak, unstable signal; don't recommend it as a
+  discoverability tactic, and don't confuse it with the voice work in
+  Section A, which is about *her* voice, not a generic authority register.
+
+**One-time site-level items — check only if asked, not every post:**
+Custom domain (Substack has been observed serving crawlers a 302 instead of
+article HTML on the platform subdomain), robots.txt not blocking
+`OAI-SearchBot`/`PerplexityBot`/`ClaudeBot`/`Google-Extended`, Bing Webmaster
+Tools submission. Mention once if relevant, don't repeat per report.
 
 **Meta Description (if present in frontmatter):**
-- 150-160 characters?
-- Compelling summary?
-- Includes target keywords?
+- 150-160 characters, compelling, includes the actual topic — this remains
+  useful as a click-through lever in search results regardless of the
+  AI-citation question.
 
-**Content Structure:**
-- Clear introduction that hooks reader?
-- Logical flow between sections?
-- Conclusion that reinforces main points?
-- Post length appropriate for topic?
-
-**Keywords:**
-- Are main keywords used naturally throughout?
-- Good keyword density without stuffing?
-- Variations of main terms?
+**Subheadings (H2, H3):**
+- Clear hierarchical structure, no skipped levels, break up long sections,
+  descriptive rather than generic.
 
 ### C. Clarity & Readability
 
 **Paragraph length:**
-- Are paragraphs too long (> 4-5 sentences)?
-- Do they each focus on one idea?
-- Good mix of short and medium paragraphs?
+- Are paragraphs too long (> 4-5 sentences)? Do they each focus on one idea?
 
 **Sentence variety:**
-- Mix of short and long sentences?
-- Avoid too many sentences starting the same way?
-- Active voice where appropriate?
+- Mix of short and long sentences? Active voice where it serves the point?
+- Are sentences structured around what logically matters most? (e.g.,
+  "Giving them money scales sublinearly" not "It scales sublinearly to give
+  them money")
 
 **Transitions:**
-- Smooth flow between paragraphs?
-- Clear logical connections?
-- Signposting for reader orientation?
+- Smooth flow between paragraphs? Clear logical connections? Signposting?
 
 **Repetition:**
-- Same words/phrases overused?
-- Same point made multiple times without adding value?
-- Redundant modifiers?
+- Same words/phrases overused? Same point made multiple times without
+  adding value? Redundant modifiers?
 
 **Jargon & Accessibility:**
-- Technical terms explained where needed?
-- Balance between expertise and accessibility?
-- Acronyms defined on first use?
+- Technical terms explained where needed? Acronyms defined on first use?
 
-### D. Argument Strength (Light Check)
+### D. Argument Strength (Light Check Only)
 
-**Not a deep critique** (that's the blog-critique skill), but flag:
-- Claims that need support
-- Weak transitions in logic
-- Sections that drag or could be tightened
+Not a deep critique — that's `blog-critique`. Only flag the most obvious:
+claims that clearly need support, weak transitions in logic, sections that
+visibly drag. If you find yourself wanting to steelman a counterargument or
+go back-and-forth on an evidence gap, stop — note it under "Out of Scope"
+and suggest running `blog-critique` instead.
 
 ### E. Publication Checklist
 
-- Title/headline present?
-- Author/date in frontmatter?
-- All links working (no broken [[wikilinks]])?
+- Title/headline present? Author/date in frontmatter?
+- All links working (no broken `[[wikilinks]]`)?
 - Images referenced are present?
-- Proper formatting throughout?
-- No placeholder text ([TK], [INSERT], etc.)?
+- No placeholder text (`[TK]`, `[INSERT]`, bracketed TODO notes)?
 - Consistent voice throughout?
 
 ## Step 3: Create Proofreading Report
 
-Create report at:
-```
-/mnt/c/Users/carey/Documents/SyncVaultC/Blog Ideas and Posts/YYYY-MM-DD - TITLE/[post-name]-proofread.md
-```
+Write to `<post-folder>/<post-slug>-proofread.md` per `<vault_conventions>`.
 
-If folder doesn't exist, save to same directory as source:
-```
-[post-name]-proofread.md
-```
-
-Use this format:
-
-```markdown
----
-title: Proofread Report
-date: YYYY-MM-DD
-source: [filename]
-status: Ready for Review
----
-
-# Proofread Report: [Post Title]
-
-**Source:** `[path]`
-**Word Count:** [count]
-**Reviewed:** YYYY-MM-DD
-
-## Overall Assessment
-
-[2-3 sentence summary of the post's readiness for publication]
-
-**Strengths:**
-- [What's working well]
-- [Strong elements]
-
-**Areas for Improvement:**
-- [Main issues to address]
-- [Priority fixes]
-
----
-
-## Voice & Style
-
-### AI-y Language to Remove
-
-#### Line [X]: [Phrase]
-```
-[Context around the phrase]
-```
-**Issue:** [What makes this sound AI-y]
-**Suggestion:** [How to rephrase in author's voice]
-
-#### Line [Y]: Hedging language
-```
-It's worth noting that privacy regulations...
-```
-**Issue:** Unnecessary hedging - makes point weaker
-**Suggestion:** "Privacy regulations..." (just state it directly)
-
-### Voice Consistency
-
-[Overall assessment of whether voice is consistent throughout. Flag any sections that feel off.]
-
-**Sections that need attention:**
-- Lines [X-Y]: Feels too formal/corporate
-- Lines [A-B]: Lost the edge/sarcasm here
-
----
-
-## SEO & Structure
-
-### Headline
-**Current:** [headline]
-**Assessment:** [strength/weaknesses]
-**Character count:** [count] (optimal: 50-60)
-**Suggestions:**
-- [Alternative if needed]
-
-### Subheadings
-**Current structure:**
-```
-H1: [title]
-H2: [subhead 1]
-H3: [subhead 1.1]
-H2: [subhead 2]
-...
-```
-
-**Issues:**
-- [Any hierarchy problems]
-- [Missing subheadings in long sections]
-- [Unclear or generic subheads]
-
-**Suggestions:**
-- Line [X]: Add H2 subheading here to break up long section
-- Line [Y]: Current H2 "[title]" could be more descriptive
-
-### Meta Description
-**Current:** [if present]
-**Status:** [Missing / Too short / Too long / Good]
-**Character count:** [count] (optimal: 150-160)
-**Suggestion:** [If needed]
-
-### Keywords & Topics
-**Main keywords identified:** [list]
-**Usage:** [Natural / Forced / Missing opportunities]
-**Suggestions:** [If any]
-
----
-
-## Clarity & Readability
-
-### Long Paragraphs
-**Lines [X-Y]:** [number] sentences - consider breaking up
-**Lines [A-B]:** [number] sentences - consider breaking up
-
-### Weak Transitions
-**Between sections [X] and [Y]:**
-```
-[Show the transition]
-```
-**Issue:** Abrupt jump between topics
-**Suggestion:** Add transition sentence that connects [previous concept] to [new concept]
-
-### Repetition
-**Word/phrase "[term]" used [X] times**
-Lines: [line numbers]
-**Suggestion:** Vary with synonyms: [alternatives]
-
-**Concept repeated:**
-Lines [X] and [Y] both make the same point about [topic]
-**Suggestion:** Consolidate or cut one
-
-### Sentence Structure Issues
-
-#### Passive voice (where active is better)
-**Line [X]:**
-```
-The data was collected by OpenAI...
-```
-**Suggestion:** "OpenAI collected the data..."
-
-#### Starting sentences the same way
-Lines [X-Z] all start with "The [thing]..."
-**Suggestion:** Vary sentence openings for better flow
-
----
-
-## Argument & Logic
-
-### Weak Claims Needing Support
-[Only flag obvious ones - full critique is separate skill]
-
-**Line [X]:** Claim needs evidence
-```
-[The claim]
-```
-**Suggestion:** Add source or data
-
-### Sections That Could Be Tightened
-**Lines [X-Y]:** [Section name]
-**Issue:** This section meanders / is repetitive / loses focus
-**Suggestion:** [How to tighten]
-
----
-
-## Publication Checklist
-
-- [x] Title present
-- [x] Author/date in frontmatter
-- [ ] All images referenced exist
-- [x] Links functional
-- [x] No placeholder text
-- [ ] Consistent voice throughout
-- [x] No obvious typos
-
-**Items needing attention:**
-1. [Item]
-2. [Item]
-
----
-
-## Priority Fixes (Do These First)
-
-1. **[Highest priority issue]** - Lines [X-Y]
-2. **[Second priority]** - Line [X]
-3. **[Third priority]** - Throughout
-
-## Polish Fixes (Optional)
-
-- [Nice-to-have improvements]
-- [Minor style tweaks]
-
----
-
-## Suggested Edits
-
-[If there are specific line edits that would improve the piece, include them here]
-
-**Line [X]:**
-```
-Current: [text]
-Suggested: [improved text]
-Reason: [why this is better]
-```
-
----
-
-## Notes
-
-[Any additional observations, patterns noticed, or general feedback about the piece]
-```
+Use the structure in `references/proofread-report-template.md`. Read that
+file when you reach this step — not before.
 
 ## Step 4: Report to User
 
-Tell the user:
-```
-Proofreading complete! Report saved to: [path]
-
-Summary:
-- [X] voice/style issues flagged
-- [Y] SEO improvements suggested
-- [Z] clarity fixes needed
-
-Priority: [High/Medium/Low priority fixes needed]
-```
-
+Tell the user the path, a one-line count of issues by category, and overall
+priority (High/Medium/Low fixes needed).
 </process>
 
-<specific_checks>
-
-## AI-y Language Red Flags
-
-Search for these patterns (case insensitive):
-
-**Hedging phrases:**
-- "it's worth noting"
-- "it's important to"
-- "one might argue"
-- "it could be said"
-- "in some ways"
-- "to some extent"
-
-**Generic enthusiasm:**
-- "incredibly" (unless used sarcastically)
-- "absolutely amazing/powerful/critical"
-- "truly remarkable"
-- "extremely important"
-
-**Overused qualifiers:**
-- "very" (usually unnecessary)
-- "quite"
-- "rather"
-- "somewhat"
-
-**Corporate speak:**
-- "leverage" (unless mocking)
-- "synergy"
-- "paradigm shift"
-- "best practices" (unless in quotes/mocking)
-
-**Redundant pairs:**
-- "first and foremost"
-- "each and every"
-- "hopes and dreams"
-- "quick and easy"
-
-## SEO Best Practices
-
-**Title:**
-- 50-60 characters for Google SERP
-- Front-load important keywords
-- Make it compelling, not just descriptive
-
-**Meta description:**
-- 150-160 characters
-- Include target keyword
-- Call to action or hook
-- Avoid truncation
-
-**Headings:**
-- H1: One per page (the title)
-- H2: Main sections
-- H3: Subsections
-- Don't skip levels (no H1 -> H3)
-- Use keywords naturally
-
-**Content:**
-- Target keyword in first 100 words
-- Use variations throughout
-- Internal/external links to authoritative sources
-- Break up text with lists, quotes, images
-
-</specific_checks>
-
 <style_notes>
-
-- Be specific: Always cite line numbers and show context
-- Be actionable: Don't just say "improve this", suggest how
-- Respect the voice: Don't smooth out the edge
-- Prioritize: Separate "must fix" from "nice to have"
-- Stay practical: Focus on changes that matter for publication
-
+- Be specific: cite line numbers and show context.
+- Be actionable: don't just say "improve this," suggest how.
+- Respect the voice: don't smooth out the edge.
+- Prioritize: separate "must fix" from "nice to have."
 </style_notes>
 
 <key_reminders>
-
 1. **Preserve the edge** - Don't suggest softening strong language
 2. **Flag AI-y patterns** - These undermine authenticity
-3. **SEO matters** - But not at the expense of voice
-4. **Be thorough** - This is the final check before publishing
-5. **Give context** - Explain WHY something should change
-6. **Prioritize** - Help author focus on what matters most
-
+3. **Discoverability is now mostly "does this get retrieved," not "does this have the right keywords"** - lean on Tier 1, actively flag Tier 2 tactics as not worth her time
+4. **Be thorough** - this is the final check before publishing
+5. **Give context** - explain WHY something should change
+6. **Stay in your lane** - deep argument critique belongs to `blog-critique`; formatting belongs to `blog-linter`
 </key_reminders>
+</content>

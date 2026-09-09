@@ -1,5 +1,5 @@
 ---
-name: vendor-privacy-review
+name: vendor-privacy
 description: Systematic analysis of vendor data processing agreements (DPAs) and privacy notices for compliance issues, red flags, and inconsistencies. Use when conducting vendor privacy assessments, reviewing DPAs or privacy policies for vendor management programs, comparing vendor terms against GDPR/CCPA requirements, or when user mentions "vendor privacy review", "DPA analysis", "/vendorreview", or uploads vendor privacy documentation.
 ---
 
