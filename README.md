@@ -4,8 +4,11 @@ A collection of Claude Code skills for privacy/tech blog writing workflow.
 
 ## Vault layout
 
+`<vault>` is wherever your Obsidian vault lives; the skills resolve it from
+`_shared/references/vault-conventions.md`.
+
 ```
-/mnt/c/Users/carey/Documents/SyncVaultC/05-Blog-Pipeline/
+<vault>/05-Blog-Pipeline/
 ├── Ideas/                — unstarted concepts (+ Ideas/Research/)
 ├── Drafting/              — posts in progress
 ├── Published/             — live posts
