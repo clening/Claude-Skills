@@ -25,13 +25,13 @@ skills waste the author's time and produce contradictory advice.
 </scope>
 
 <author_style>
-Read `/home/privacat/.claude/skills/_shared/references/voice.md` before
+Read `~/Obsidian/SyncVaultC/05-Blog-Pipeline/_shared/voice.md` before
 Step 2. Shared across blog-critique, blog-proofreader, and blog-marketer —
 don't duplicate it here.
 </author_style>
 
 <vault_conventions>
-Read `/home/privacat/.claude/skills/_shared/references/vault-conventions.md`
+Read `~/.claude/skills/_shared/references/vault-conventions.md`
 before Step 1. It covers the base path, folder-per-post layout, how to
 resolve a bare filename or fragment into a real post, the lazy-migration
 rule for loose files, and where to write generated artifacts. Shared across

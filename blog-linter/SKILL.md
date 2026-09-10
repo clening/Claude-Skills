@@ -26,7 +26,7 @@ under "Out of Scope" in the report and move on — don't audit it here.
 </scope>
 
 <vault_conventions>
-Read `/home/privacat/.claude/skills/_shared/references/vault-conventions.md`
+Read `~/.claude/skills/_shared/references/vault-conventions.md`
 before Step 1. Shared across all four blog skills.
 </vault_conventions>
 
@@ -43,7 +43,7 @@ patterns) are exact, mechanical work — a script does this correctly every
 time; doing it by eye on a 40-footnote post risks a miscount. Run it:
 
 ```bash
-python3 /home/privacat/.claude/skills/blog-linter/scripts/lint_checks.py "<resolved-path>"
+python3 ~/.claude/skills/blog-linter/scripts/lint_checks.py "<resolved-path>"
 ```
 
 This returns JSON with:

@@ -24,7 +24,7 @@ stray loose files — live in
 ## Shared references
 
 - `_shared/references/vault-conventions.md` — path/folder rules, read by all four skills.
-- `_shared/references/voice.md` — Carey's writing voice, read by blog-critique, blog-proofreader, blog-marketer. One file, so voice guidance can't drift between skills the way three separate copies used to.
+- `~/Obsidian/SyncVaultC/05-Blog-Pipeline/_shared/voice.md` — Carey's writing voice, read by blog-critique, blog-proofreader, blog-marketer. One file, so voice guidance can't drift between skills the way three separate copies used to.
 
 ## Skills, and how they divide the work
 
@@ -90,7 +90,7 @@ Tuned for posts about tech extensity and concentrations of power, power
 dynamics in tech, Big Tech criticism, AI, privacy and data protection,
 technology policy, AI governance, and GDPR/CCPA and data protection law.
 Carey's focus is moving away from pure GDPR/legal analysis toward the
-extensity/power-concentration framing — see `_shared/references/voice.md`
+extensity/power-concentration framing — see `~/Obsidian/SyncVaultC/05-Blog-Pipeline/_shared/voice.md`
 for the full profile. It's a living document, being refined through direct
 conversation with Carey, not a fixed spec.
 

@@ -1,2 +1,8 @@
 __pycache__/
 *.pyc
+
+# Machine-specific: names the host, ports and where credentials live. Local only.
+stack-forensics/
+
+# Voice guide lives in the vault, not in a public repo.
+_shared/references/voice.md

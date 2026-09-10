@@ -27,12 +27,12 @@ to find/cite; this skill promotes a post that's already good.
 </scope>
 
 <vault_conventions>
-Read `/home/privacat/.claude/skills/_shared/references/vault-conventions.md`
+Read `~/.claude/skills/_shared/references/vault-conventions.md`
 before Step 1. Shared across all four blog skills.
 </vault_conventions>
 
 <author_voice>
-Read `/home/privacat/.claude/skills/_shared/references/voice.md` before
+Read `~/Obsidian/SyncVaultC/05-Blog-Pipeline/_shared/voice.md` before
 Step 3. Shared across blog-critique, blog-proofreader, and blog-marketer.
 
 **Adapt to platform, don't lose the edge:**

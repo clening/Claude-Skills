@@ -29,12 +29,12 @@ under "Out of Scope" and move on.
 </scope>
 
 <vault_conventions>
-Read `/home/privacat/.claude/skills/_shared/references/vault-conventions.md`
+Read `~/.claude/skills/_shared/references/vault-conventions.md`
 before Step 1. Shared across all four blog skills.
 </vault_conventions>
 
 <author_voice_guidelines>
-Read `/home/privacat/.claude/skills/_shared/references/voice.md` before
+Read `~/Obsidian/SyncVaultC/05-Blog-Pipeline/_shared/voice.md` before
 Step 2. Shared across blog-critique, blog-proofreader, and blog-marketer.
 
 **Red Flags for AI-y Language** (this skill's own responsibility, not covered
